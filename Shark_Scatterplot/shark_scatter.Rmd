@@ -1,0 +1,31 @@
+---
+title: "sharks_plotly_scatter"
+author: "Paul"
+date: "1/14/2022"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(plotly)
+library(tidyverse)
+library(haven)
+mypath <- 'C:/DataSci/Classes/Data Vis/Data/SharksClean.csv'
+Shrk <- read_csv(file=mypath)
+colnames(Shrk)
+```
+```{r}
+plot_ly(data=Shrk, 
+        type='scatter', 
+        mode='markers', 
+        x = ~ToothSize, 
+        y = ~BodySize, 
+        color = ~Genus,
+        text= paste0("Scientific Name: ", Shrk$Genus, " ", Shrk$Species, "<br>",
+                     "Sex: ", Shrk$Sex),
+        hoverinfo='text')
+```
+

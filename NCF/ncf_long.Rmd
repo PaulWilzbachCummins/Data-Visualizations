@@ -1,0 +1,52 @@
+---
+title: "NCF_Alum"
+author: "Paul"
+date: "1/17/2022"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(tidyverse)
+library(haven)
+mypath <- 'C:/DataSci/Classes/Data Vis/Data/NCAlumn.csv'
+ncf <- read_csv(file=mypath)
+# colnames(ncf)
+# head(ncf)
+# unique(ncf[c("DIVISION_1")])
+```
+
+```{r}
+ncf.long <- ncf %>% 
+  select(ID,GRAD_YEAR,ACADEMIC_PROGRAM_1,ACADEMIC_PROGRAM_2,ACADEMIC_PROGRAM_3, Industry) %>% 
+  filter(! is.na(ACADEMIC_PROGRAM_1)) %>%
+  filter(! is.na(Industry)) %>%
+  pivot_longer(cols=c(ACADEMIC_PROGRAM_1,ACADEMIC_PROGRAM_2, ACADEMIC_PROGRAM_3), 
+                                 names_to="Program", values_to="Major") %>% 
+  filter(! is.na(Major)) %>%
+  mutate(Program=fct_recode(Program, "1"="ACADEMIC_PROGRAM_1", "2"="ACADEMIC_PROGRAM_2",
+                            "3"="ACADEMIC_PROGRAM_3"))
+  
+head(ncf.long, 5)
+
+```
+
+
+
+
+
+counts/percents of industry grouped by divison1
+```{r}
+# ncf2 <- ncf %>% 
+#   select(DIVISION_1, Industry) %>%
+#   filter(! is.na(DIVISION_1)) %>% 
+#   filter(! is.na(Industry)) %>% 
+#   group_by(DIVISION_1) %>% 
+#   count(Industry) %>%  
+#   mutate(perc=100*n/sum(n))
+# ncf2
+```
+

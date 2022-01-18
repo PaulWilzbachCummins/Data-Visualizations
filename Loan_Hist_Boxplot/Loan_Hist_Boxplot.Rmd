@@ -1,0 +1,48 @@
+---
+title: "histogram"
+author: "Paul"
+date: "1/12/2022"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(tidyverse)
+library(haven)
+mypath <- 'C:/DataSci/Classes/Data Vis/Data/LendingClubLoanData.csv'
+LCL <- read_csv(file=mypath)
+#colnames(LCL)
+```
+
+```{r}
+hist<- ggplot(data=LCL, aes(x=loan_amnt, y = stat(count)/1000)) +
+  geom_histogram(color="black",fill="lightblue",center=0,binwidth=2500) +
+  labs(y="Number of Loans (in Thousands)",x="Loan Amount (USD)") +
+  ggtitle(label="Loan Amount Distribution",subtitle="Lending Club Loan Data") +
+  theme(plot.title = element_text(hjust=0.5),plot.subtitle = element_text(hjust=0.5)) +
+  theme_minimal()
+
+box <- ggplot(data = LCL, aes(x=loan_amnt)) +
+geom_boxplot(fill="lightblue", outlier.shape=21, outlier.fill="lightblue", outlier.alpha=0.3) +
+theme_classic() + 
+theme(
+axis.line.y=element_blank(),
+axis.text.y=element_blank(),
+axis.ticks.y=element_blank(),
+axis.title.y=element_blank(),
+axis.line.x=element_blank(),
+axis.text.x=element_blank(),
+axis.ticks.x=element_blank(),
+axis.title.x=element_blank()
+)
+
+library(cowplot)
+plot_grid(hist, box, ncol = 1, rel_heights = c(0.85, 0.15), align = 'v', axis = 'lr')
+```
+```{r}
+ggsave("Loan_Hist_Boxplot.png")
+```
+

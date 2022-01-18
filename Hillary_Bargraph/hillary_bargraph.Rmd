@@ -1,0 +1,32 @@
+---
+title: "hillary"
+author: "Paul"
+date: "1/17/2022"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+
+```{r,fig.width = 4, fig.height = 3}
+library(ggplot2)
+
+df <- data.frame (gun = c("Gun Owner", "Non-Gun Owner","Gun Owner", "Non-Gun Owner"),
+                  support = c("Support","Support","Oppose","Oppose"),
+                    perc = c(85, 90, 15, 10))
+
+
+
+ggplot(data=df, aes(x = gun, y = perc, fill = support)) +
+  geom_bar(stat="identity") +
+  labs(x="", y="") +
+  theme_classic() +
+  scale_fill_manual(breaks= waiver(),name="",
+                    values=c("Support" = "blue", "Oppose" = "red")) +
+  theme(axis.line.x=element_blank()) +
+  scale_y_continuous(expand=expansion(add=c(0,0)))
+```
+

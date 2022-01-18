@@ -1,0 +1,95 @@
+---
+title: "Untitled"
+author: "Paul"
+date: "1/11/2022"
+output: pdf_document
+---
+
+
+```{r}
+library(tidyverse)
+library(haven)
+mypath <- 'C:/DataSci/Classes/Data Vis/Data/GSS2018.csv'
+GSS <- read_csv(file=mypath)
+#dim(GSS)
+#colnames(GSS)
+```
+
+```{r}
+GSS.hr <- GSS %>% 
+  select(reliten, homosex) %>%
+  filter(homosex <5) %>%
+  filter(homosex != 0) %>%
+  filter(! is.na(reliten)) %>% 
+  mutate(homosex=as.character(homosex)) %>%
+  mutate(homosex=fct_recode(homosex, "Always Wrong"="1", "Almost Always Wrong"="2",
+                            "Sometimes Wrong"="3","Not Wrong at All"="4")) %>% 
+  mutate(reliten=as.character(reliten)) %>%
+  mutate(reliten=fct_recode(reliten, "Strong"="1", "Not Very Strong"="2", 
+                           "Somewhat Strong"="3", "No Religion"="4")) %>% 
+  group_by(reliten) %>% 
+  count(homosex) %>%
+  mutate(perc=100*n/sum(n))
+
+GSS.hr2 <- GSS %>% 
+  select(homosex) %>%
+  filter(homosex <5) %>%
+  filter(homosex != 0) %>%
+  mutate(homosex=as.character(homosex)) %>%
+  mutate(homosex=fct_recode(homosex, "Always Wrong"="1", "Almost Always Wrong"="2",
+                            "Sometimes Wrong"="3","Not Wrong at All"="4")) %>% 
+
+  count(homosex) %>%
+  mutate(perc=100*n/sum(n))
+
+GSS.hr2
+```
+(Views on homosexuality by reliten)
+```{r}
+ggplot(data=GSS.hr, aes(x=perc, y=reliten, fill=homosex)) +
+  geom_bar(stat="identity", position=position_stack(reverse=TRUE), color="black") +
+  labs(x="Percent (%)", y="", title="Views on Homosexuality by Strength of Religious Affiliation") +
+  scale_fill_manual(name="Views on Homosexuality:",
+                    values=c("Always Wrong"="Red", "Almost Always Wrong"="Orange",
+                            "Sometimes Wrong"="Yellow","Not Wrong at All"="Green")) +
+  scale_x_continuous(expand=expansion(add=c(0.6,0.6))) +
+theme_classic() +
+  theme(
+    legend.position = "top",
+    axis.line.y=element_blank(),
+    axis.title.y=element_blank()) +
+  scale_y_discrete(limits=c("Strong", "Somewhat Strong", "Not Very Strong", "No Religion"))
+```
+
+```{r}
+ggsave("homo_religion_barchart.png")
+```
+
+
+(Views on Homosexuality from entire population)
+```{r}
+ggplot(data=GSS.hr2, aes(fill = homosex, y=homosex, x = perc)) +
+  geom_bar(stat='identity', color="black") +
+  labs(x="Percent (%) of Respondents", y = '') +
+  ggtitle(label="Views on Homosexuality in the USA", subtitle="Data from GSS 2018") +
+  theme_classic() +
+  scale_x_continuous(expand=c(0,0), limits = c(0,60.1),breaks = c(0,20,40,60)) +
+  theme(plot.title = element_text(hjust=0.5),plot.subtitle = element_text(hjust=0.5)) +
+  guides(fill="none") +
+  scale_y_discrete(limits=c("Always Wrong", "Almost Always Wrong", "Sometimes Wrong",
+                            "Not Wrong at All"),
+                   labels=c("Always\nWrong", "Almost Always\nWrong",
+                            "Sometimes\nWrong","Not Wrong\nat All")) +
+ # geom_bar(color="black")  +
+  geom_text(aes(label=paste0(format(perc, digits=2),"%"),
+                x=perc-2), color="white",size=3.4)
+
+```
+
+
+```{r}
+ggsave("homo_barchart.png")
+```
+
+
+
